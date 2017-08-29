@@ -15,6 +15,7 @@ drs.inner <- function(y, data, yname, xnames) {
     IY <- 1*(data[,yname] <= y)
     X <- data[,xnames]
     dta <- cbind.data.frame(IY, X)
+    colnames(dta) <- c("IY", xnames)
     formla <- as.formula(paste0("IY ~", paste(xnames, collapse="+")))
     lgit <- glm(formla, data=dta, family=binomial(link=logit))
     lgit
