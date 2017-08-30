@@ -32,13 +32,13 @@ DR<- function(yvals, glmlist) {
     out
 }
 
-predict.DR <- function(drobj, y, x) {
+predict.DR <- function(y, drobj, xdf) {
     yvals <- drobj$yvals
     glmlist <- drobj$glmlist
     if (! (y %in% yvals)) {
-        stop("must provide value of y in drobj$yvals")
+         stop("must provide value of y in drobj$yvals")
     }
-    x <- data.frame(t(x))
+    x <- xdf
     colnames(x) <-  names(coef(glmlist[[1]]))[-1]
     i <- which(yvals==y)[1]
     predict(glmlist[[i]], newdata=x, type="response")
