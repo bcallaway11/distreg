@@ -24,7 +24,7 @@ where $\Lambda$ is some known link function, such as logit.
 
 You can install TempleMetrics from github with:
 
-```{r gh-installation, eval=FALSE}
+```{r gh-installation}
 # install.packages("devtools")
 devtools::install_github("bcallaway11/TempleMetrics")
 ```
@@ -61,5 +61,5 @@ y0 <- yvals[50]
 ecdf(igm$lcfincome)(y0)
 Fycondx(y0, dres, xdf)
 ```
-This example says that: (1) the fraction of "children" in the dataset with income below `{r} exp(y0)` is `{r} ecdf(igm$lcfincome)(y0)`, but (2) we estimate that the fraction of children whose parent's income is `{r} exp(10)` and have parent's with less than a HS education with income below `{r} exp(y0)` is `{r} Fycondx(y0,dres,xdf)`.
-```
+This example says that: (1) the fraction of "children" in the dataset with income below `r format(exp(y0),digits=4)` is `r round(ecdf(igm$lcfincome)(y0),2)`, but (2) we estimate that the fraction of children whose parent's income is `r format(exp(10),digits=4)` and have parent's with less than a HS education with income below `r format(exp(y0),digits=4)` is `r round(Fycondx(y0,dres,xdf),2)`.
+

@@ -17,6 +17,8 @@ You can install TempleMetrics from github with:
 ``` r
 # install.packages("devtools")
 devtools::install_github("bcallaway11/TempleMetrics")
+#> Skipping install of 'TempleMetrics' from a github remote, the SHA1 (a6cb68e9) has not changed since last install.
+#>   Use `force = TRUE` to force installation
 ```
 
 or from CRAN using
@@ -45,10 +47,45 @@ head(igm)
 
 ``` r
 y0 <- median(igm$lcfincome)
-distreg
-#> function (yvals, data, yname, xnames) 
-#> {
-#>     DR(yvals, drs(yvals, data, yname, xnames))
-#> }
-#> <environment: namespace:TempleMetrics>
+dreg <- distreg(lcfincome ~ lfincome + HEDUC, igm, y0)
+dreg
+#> $yvals
+#> [1] 11.04563
+#> 
+#> $glmlist
+#> $glmlist[[1]]
+#> 
+#> Call:  glm(formula = formla, family = binomial(link = logit), data = dta)
+#> 
+#> Coefficients:
+#> (Intercept)     lfincome      HEDUCHS  HEDUCLessHS  
+#>     15.3320      -1.3976       0.1629       0.2256  
+#> 
+#> Degrees of Freedom: 499 Total (i.e. Null);  496 Residual
+#> Null Deviance:       693.1 
+#> Residual Deviance: 640.9     AIC: 648.9
+#> 
+#> 
+#> attr(,"class")
+#> [1] "DR"
 ```
+
+Example 2
+---------
+
+In many cases, of primary interest with distribution regression is obtaining \(\hat{F}_{Y|X}(y|x)\) for some particular values of \(y\) and \(x\). That's what we do in this example.
+
+``` r
+yvals <- seq(quantile(igm$lcfincome,.05,type=1),
+quantile(igm$lcfincome,.95, type=1), length.out=100)
+dres <- distreg(lcfincome ~ lfincome + HEDUC, igm, yvals)
+xdf <- data.frame(lfincome=10, HEDUC="LessHS")
+y0 <- yvals[50]
+ecdf(igm$lcfincome)(y0)
+#> [1] 0.328
+Fycondx(y0, dres, xdf)
+#>         1 
+#> 0.7267977
+```
+
+This example says that: (1) the fraction of "children" in the dataset with income below 46628 is 0.33, but (2) we estimate that the fraction of children whose parent's income is 22026 and have parent's with less than a HS education with income below 46628 is 0.73.

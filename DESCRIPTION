@@ -2,8 +2,8 @@ Package: TempleMetrics
 Title: R functions created by the Temple Econometrics Reading Group
 Version: 1.0.0
 Authors@R: c(
-  person("Brantly", "Callaway", email = "brantly.callaway@temple.edu", role = c("aut")), person("Weige", "Huang", email = "weige.huang@temple.edu", role=c("aut","cre")))
-Description: These are miscellaneous functions created by the Temple Econometrics Reading Group.
+  person("Brantly", "Callaway", email = "brantly.callaway@temple.edu", role = c("aut","cre")), person("Weige", "Huang", email = "weige.huang@temple.edu", role=c("aut")))
+Description: These are miscellaneous functions created by the Temple Econometrics Reading Group.  The main set of functions (at the moment) are for implementing Distribution Regression as a way to flexibly model the distribution of some outcome Y conditional on covariates X.
 Depends: R (>= 2.1.0)
 License: GPL-2
 Encoding: UTF-8

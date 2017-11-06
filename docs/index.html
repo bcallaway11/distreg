@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>R functions created by the Temple Econometrics Reading Group • TempleMetrics</title>
-<!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/sandstone/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="jquery.sticky-kit.min.js"></script><script src="pkgdown.js"></script><!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
@@ -36,6 +36,9 @@
 </li>
 <li>
   <a href="reference/index.html">Reference</a>
+</li>
+<li>
+  <a href="news/index.html">News</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right"></ul>
@@ -68,7 +71,9 @@ The TempleMetrics package is a collection of functions implemented by members of
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>You can install TempleMetrics from github with:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages("devtools")</span>
-devtools::<span class="kw">install_github</span>(<span class="st">"bcallaway11/TempleMetrics"</span>)</code></pre></div>
+devtools::<span class="kw">install_github</span>(<span class="st">"bcallaway11/TempleMetrics"</span>)
+<span class="co">#&gt; Skipping install of 'TempleMetrics' from a github remote, the SHA1 (a6cb68e9) has not changed since last install.</span>
+<span class="co">#&gt;   Use `force = TRUE` to force installation</span></code></pre></div>
 <p>or from CRAN using</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"TempleMetrics"</span>)</code></pre></div>
 </div>
@@ -87,12 +92,43 @@ devtools::<span class="kw">install_github</span>(<span class="st">"bcallaway11/T
 <span class="co">#&gt; 3333 10.915150 11.30180     HS</span>
 <span class="co">#&gt; 2717  9.764008 10.80891 LessHS</span></code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">y0 &lt;-<span class="st"> </span><span class="kw">median</span>(igm$lcfincome)
-distreg
-<span class="co">#&gt; function (yvals, data, yname, xnames) </span>
-<span class="co">#&gt; {</span>
-<span class="co">#&gt;     DR(yvals, drs(yvals, data, yname, xnames))</span>
-<span class="co">#&gt; }</span>
-<span class="co">#&gt; &lt;environment: namespace:TempleMetrics&gt;</span></code></pre></div>
+dreg &lt;-<span class="st"> </span><span class="kw"><a href="reference/distreg.html">distreg</a></span>(lcfincome ~<span class="st"> </span>lfincome +<span class="st"> </span>HEDUC, igm, y0)
+dreg
+<span class="co">#&gt; $yvals</span>
+<span class="co">#&gt; [1] 11.04563</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $glmlist</span>
+<span class="co">#&gt; $glmlist[[1]]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:  glm(formula = formla, family = binomial(link = logit), data = dta)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Coefficients:</span>
+<span class="co">#&gt; (Intercept)     lfincome      HEDUCHS  HEDUCLessHS  </span>
+<span class="co">#&gt;     15.3320      -1.3976       0.1629       0.2256  </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Degrees of Freedom: 499 Total (i.e. Null);  496 Residual</span>
+<span class="co">#&gt; Null Deviance:       693.1 </span>
+<span class="co">#&gt; Residual Deviance: 640.9     AIC: 648.9</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; attr(,"class")</span>
+<span class="co">#&gt; [1] "DR"</span></code></pre></div>
+</div>
+<div id="example-2" class="section level2">
+<h2 class="hasAnchor">
+<a href="#example-2" class="anchor"></a>Example 2</h2>
+<p>In many cases, of primary interest with distribution regression is obtaining <span class="math inline">\(\hat{F}_{Y|X}(y|x)\)</span> for some particular values of <span class="math inline">\(y\)</span> and <span class="math inline">\(x\)</span>. That’s what we do in this example.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">yvals &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="kw">quantile</span>(igm$lcfincome,.<span class="dv">05</span>,<span class="dt">type=</span><span class="dv">1</span>),
+<span class="kw">quantile</span>(igm$lcfincome,.<span class="dv">95</span>, <span class="dt">type=</span><span class="dv">1</span>), <span class="dt">length.out=</span><span class="dv">100</span>)
+dres &lt;-<span class="st"> </span><span class="kw"><a href="reference/distreg.html">distreg</a></span>(lcfincome ~<span class="st"> </span>lfincome +<span class="st"> </span>HEDUC, igm, yvals)
+xdf &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">lfincome=</span><span class="dv">10</span>, <span class="dt">HEDUC=</span><span class="st">"LessHS"</span>)
+y0 &lt;-<span class="st"> </span>yvals[<span class="dv">50</span>]
+<span class="kw">ecdf</span>(igm$lcfincome)(y0)
+<span class="co">#&gt; [1] 0.328</span>
+<span class="kw"><a href="reference/Fycondx.html">Fycondx</a></span>(y0, dres, xdf)
+<span class="co">#&gt;         1 </span>
+<span class="co">#&gt; 0.7267977</span></code></pre></div>
+<p>This example says that: (1) the fraction of “children” in the dataset with income below 46628 is 0.33, but (2) we estimate that the fraction of children whose parent’s income is 22026 and have parent’s with less than a HS education with income below 46628 is 0.73.</p>
 </div>
 </div>
 </div>
@@ -104,8 +140,8 @@ distreg
 <p><a href="https://www.r-project.org/Licenses/GPL-2">GPL-2</a></p>
 <h2>Developers</h2>
 <ul class="list-unstyled">
-<li>Brantly Callaway <br><small class="roles"> Author </small> </li>
-<li>Weige Huang <br><small class="roles"> Author, maintainer </small> </li>
+<li>Brantly Callaway <br><small class="roles"> Author, maintainer </small> </li>
+<li>Weige Huang <br><small class="roles"> Author </small> </li>
 </ul>
 </div>
 
