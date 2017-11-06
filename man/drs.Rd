@@ -10,10 +10,6 @@ drs(yvals, data, yname, xnames)
 \item{yvals}{all the values of y to compute F(y|x)}
 
 \item{data}{the dataset}
-
-\item{yname}{the name of the y variables in the dataset}
-
-\item{xnames}{the names of the x variables in the dataset}
 }
 \value{
 list of glm objects for each value of y

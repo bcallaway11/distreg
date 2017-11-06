@@ -8,10 +8,6 @@ drs.inner(y, data, yname, xnames)
 }
 \arguments{
 \item{data}{the dataset}
-
-\item{yname}{the name of the y variables in the dataset}
-
-\item{xnames}{the names of the x variables in the dataset}
 }
 \value{
 glm object

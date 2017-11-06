@@ -1,0 +1,64 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
+
+# TempleMetrics
+
+The TempleMetrics package is a collection of functions implemented by members of the Econometrics Reading Group at Temple University.  The main functions (at the moment) are built for distribution regression.  That is, one can estimate the distribution of $Y$ conditional on $X$ using a model for a binary outcome.  For example,
+\begin{align*}
+  F_{Y|X}(y|x) = \Lambda(x'\beta)
+\end{align*}
+where $\Lambda$ is some known link function, such as logit.  
+
+## Installation
+
+You can install TempleMetrics from github with:
+
+```{r gh-installation}
+# install.packages("devtools")
+devtools::install_github("WeigeHuangEcon/TempleMetrics")
+```
+or from CRAN using
+```{r, eval=FALSE}
+install.packages("TempleMetrics")
+```
+
+## Example 1
+
+The first example is how to run distribution regression for a single value of $y$ of $Y$.  This example uses the `igm` dataset which is a collection of 500 parent-child pairs of income along with the parent's education level which comes from the Panel Study of Income Dynamics (PSID).
+
+```{r}
+library(TempleMetrics)
+data(igm)
+head(igm)
+```
+```{r}
+y0 <- median(igm$lcfincome)
+dreg <- distreg(lcfincome ~ lfincome + HEDUC, igm, y0)
+dreg
+```
+
+## Example 2
+In many cases, of primary interest with distribution regression is obtaining $\hat{F}_{Y|X}(y|x)$ for some particular values of $y$ and $x$.  That's what we do in this example.
+
+```{r}
+yvals <- seq(quantile(igm$lcfincome,.05,type=1),
+quantile(igm$lcfincome,.95, type=1), length.out=100)
+dres <- distreg(lcfincome ~ lfincome + HEDUC, igm, yvals)
+xdf <- data.frame(lfincome=10, HEDUC="LessHS")
+y0 <- yvals[50]
+ecdf(igm$lcfincome)(y0)
+Fycondx(y0, dres, xdf)
+```
+This example says that: (1) the fraction of "children" in the dataset with income below `{r} exp(y0)` is `{r} ecdf(igm$lcfincome)(y0)`, but (2) we estimate that the fraction of children whose parent's income is `{r} exp(10)` and have parent's with less than a HS education with income below `{r} exp(y0)` is `{r} Fycondx(y0,dres,xdf)`.
+

@@ -2,18 +2,16 @@
 % Please edit documentation in R/TempleMetrics.R
 \name{distreg}
 \alias{distreg}
-\title{title distreg}
+\title{distreg}
 \usage{
-distreg(yvals, data, yname, xnames)
+distreg(formla, data, yvals)
 }
 \arguments{
-\item{yvals}{all the values of y to compute F(y|x)}
+\item{formla}{y ~ x}
 
 \item{data}{the dataset}
 
-\item{yname}{the name of the y variables in the dataset}
-
-\item{xnames}{the names of the x variables in the dataset}
+\item{yvals}{all the values of y to compute F(y|x)}
 }
 \value{
 DR object
@@ -24,6 +22,6 @@ the main function for running distribution regressions
 \examples{
 data(igm)
 y0 <- median(igm$lcfincome)
-distreg(y0, igm, "lcfincome", c("lfincome", "HEDUC"))
+distreg(lcfincome ~ lfincome + HEDUC, igm, y0)
 
 }

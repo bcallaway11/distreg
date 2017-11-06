@@ -23,8 +23,8 @@ take a particular value of y and predict F(y|x)
 data(igm)
 yvals <- seq(quantile(igm$lcfincome,.05,type=1),
  quantile(igm$lcfincome,.95, type=1), length.out=100)
-dres <- distreg(yvals, igm, "lcfincome", c("lfincome", "HEDUC"))
-xdf <- data.frame(lfincome=10, HEDUC="COL")
+dres <- distreg(lcfincome ~ lfincome + HEDUC, igm, yvals)
+xdf <- data.frame(lfincome=10, HEDUC="LessHS")
 y0 <- yvals[50]
 Fycondx(y0, dres, xdf)
 

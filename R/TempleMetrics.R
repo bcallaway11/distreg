@@ -1,23 +1,3 @@
-## #' @title dr
-## #'
-## #' @description run single distribution regression
-## #'
-## #' @inheritParams distreg
-## #' @param y a particular value of y
-## #' @param x a paricular vector of values for x
-## #'
-## #' @return numeric value for F(y|x)
-## #' @keywords internal
-## #' @export
-## dr <- function(y, x, data, yname, xnames) {
-##     ##form <- as.formula(formla)
-##     ##dta <- model.frame(terms(formla,data=data),data=data) #or model.matrix
-##     x <- data.frame(t(x))
-##     colnames(x) <- xnames
-##     lgit <- drs.inner(y, data, yname, xnames)
-##     predict(lgit, newdata=x, type="response")
-## }
-
 #' @title drs
 #'
 #' @description run multiple distribution regressions
@@ -54,23 +34,26 @@ drs.inner <- function(y, data, yname, xnames) {
 }
 
 
-#' title distreg
+#' @title distreg
 #'
 #' @description the main function for running distribution regressions
 #'
-#' @param yvals all the values of y to compute F(y|x)
+#' @param formla y ~ x
 #' @param data the dataset
-#' @param yname the name of the y variables in the dataset
-#' @param xnames the names of the x variables in the dataset
+#' @param yvals all the values of y to compute F(y|x)
 #'
 #' @examples
 #' data(igm)
 #' y0 <- median(igm$lcfincome)
-#' distreg(y0, igm, "lcfincome", c("lfincome", "HEDUC"))
+#' distreg(lcfincome ~ lfincome + HEDUC, igm, y0)
 #'
 #' @return DR object
 #' @export
-distreg <- function(yvals, data, yname, xnames) {
+distreg <- function(formla, data, yvals) {
+    formla <- as.formula(formla)
+    dta <- model.frame(terms(formla,data=data),data=data) #or model.matrix
+    yname <- colnames(dta)[1]
+    xnames <- colnames(dta)[-1]
     DR(yvals, drs(yvals, data, yname, xnames))
 }
 
@@ -103,8 +86,8 @@ DR<- function(yvals, glmlist) {
 #' data(igm)
 #' yvals <- seq(quantile(igm$lcfincome,.05,type=1),
 #'  quantile(igm$lcfincome,.95, type=1), length.out=100)
-#' dres <- distreg(yvals, igm, "lcfincome", c("lfincome", "HEDUC"))
-#' xdf <- data.frame(lfincome=10, HEDUC="COL")
+#' dres <- distreg(lcfincome ~ lfincome + HEDUC, igm, yvals)
+#' xdf <- data.frame(lfincome=10, HEDUC="LessHS")
 #' y0 <- yvals[50]
 #' Fycondx(y0, dres, xdf)
 #'
@@ -116,7 +99,9 @@ Fycondx <- function(y, drobj, xdf) {
          stop("must provide value of y in drobj$yvals")
     }
     x <- xdf
-    colnames(x) <-  names(coef(glmlist[[1]]))[-1]
     i <- which(yvals==y)[1]
+    if (length(colnames(x)) == length(names(coef(glmlist[[1]]))[-1]) ) {
+        colnames(x) <-  names(coef(glmlist[[1]]))[-1]
+    }
     predict(glmlist[[i]], newdata=x, type="response")
 }
