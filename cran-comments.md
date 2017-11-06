@@ -5,7 +5,11 @@
 
 ## R CMD check results
 
-0 ERRORs | 0 WARNINGs | 0 NOTES. 
+* Local: 0 ERRORs | 0 WARNINGs | 0 NOTES.
+* Win-builder generated 1 NOTE
+
+    * possibly misspelled words in DESCRIPTION but the spelling is correct
+
 
 ## Downstream dependencies
 
