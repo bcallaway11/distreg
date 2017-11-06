@@ -17,8 +17,15 @@ You can install TempleMetrics from github with:
 ``` r
 # install.packages("devtools")
 devtools::install_github("bcallaway11/TempleMetrics")
-#> Skipping install of 'TempleMetrics' from a github remote, the SHA1 (a6cb68e9) has not changed since last install.
-#>   Use `force = TRUE` to force installation
+#> Downloading GitHub repo bcallaway11/TempleMetrics@master
+#> from URL https://api.github.com/repos/bcallaway11/TempleMetrics/zipball/master
+#> Installing TempleMetrics
+#> '/usr/lib/R/bin/R' --no-site-file --no-environ --no-save --no-restore  \
+#>   --quiet CMD INSTALL  \
+#>   '/tmp/Rtmpqr7FBK/devtools10a12afabfbe/bcallaway11-TempleMetrics-73bae63'  \
+#>   --library='/home/tug82594/R/x86_64-pc-linux-gnu-library/3.4'  \
+#>   --install-tests
+#> 
 ```
 
 or from CRAN using
