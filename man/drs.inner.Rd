@@ -4,10 +4,13 @@
 \alias{drs.inner}
 \title{drs.inner}
 \usage{
-drs.inner(y, data, yname, xnames)
+drs.inner(y, data, yname, xnames, link = "logit")
 }
 \arguments{
 \item{data}{the dataset}
+
+\item{link}{which link function to use, it can be anything accepted
+by glm (for example, logit, probit, or cloglog), the default is "logit"}
 }
 \value{
 glm object

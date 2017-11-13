@@ -7,8 +7,8 @@
 #' @return list of glm objects for each value of y
 #' @keywords internal
 #' @export
-drs <- function(yvals, data, yname, xnames) {
-    lapply(yvals, drs.inner, data=data, yname=yname, xnames=xnames)
+drs <- function(yvals, data, yname, xnames, link="logit") {
+    lapply(yvals, drs.inner, data=data, yname=yname, xnames=xnames, link=link)
 }
 
 #' @title drs.inner
@@ -23,13 +23,13 @@ drs <- function(yvals, data, yname, xnames) {
 #' @return glm object
 #' @keywords internal
 #' @export
-drs.inner <- function(y, data, yname, xnames) {
+drs.inner <- function(y, data, yname, xnames, link="logit") {
     IY <- 1*(data[,yname] <= y)
     X <- data[,xnames]
     dta <- cbind.data.frame(IY, X)
     colnames(dta) <- c("IY", xnames)
     formla <- as.formula(paste0("IY ~", paste(xnames, collapse="+")))
-    lgit <- glm(formla, data=dta, family=binomial(link=logit))
+    lgit <- glm(formla, data=dta, family=binomial(link=link))
     lgit
 }
 
@@ -41,6 +41,8 @@ drs.inner <- function(y, data, yname, xnames) {
 #' @param formla y ~ x
 #' @param data the dataset
 #' @param yvals all the values of y to compute F(y|x)
+#' @param link which link function to use, it can be anything accepted
+#'  by glm (for example, logit, probit, or cloglog), the default is "logit"
 #'
 #' @examples
 #' data(igm)
@@ -49,12 +51,12 @@ drs.inner <- function(y, data, yname, xnames) {
 #'
 #' @return DR object
 #' @export
-distreg <- function(formla, data, yvals) {
+distreg <- function(formla, data, yvals, link="logit") {
     formla <- as.formula(formla)
     dta <- model.frame(terms(formla,data=data),data=data) #or model.matrix
     yname <- colnames(dta)[1]
     xnames <- colnames(dta)[-1]
-    DR(yvals, drs(yvals, data, yname, xnames))
+    DR(yvals, drs(yvals, data, yname, xnames, link))
 }
 
 ## DR class
@@ -72,36 +74,93 @@ DR<- function(yvals, glmlist) {
     out
 }
 
-#' @title Fycondx
+#' @title Fycondx.DR
 #'
 #' @description take a particular value of y and predict F(y|x)
 #'
-#' @param y a particular value of y for F(y|x)
-#' @param drobj a distribution regression object
+#' @importFrom BMisc makeDist
+#'
+#' @param object a distribution regression object
+#' @param yvals the values to compute the ecdf for
 #' @param xdf a dataframe (can contain multiple rows) with x values
 #'
-#' @return F(y|x) for each value of x passed in
+#' @return an ecdf for each value of the x's
 #'
 #' @examples
 #' data(igm)
 #' yvals <- seq(quantile(igm$lcfincome,.05,type=1),
 #'  quantile(igm$lcfincome,.95, type=1), length.out=100)
 #' dres <- distreg(lcfincome ~ lfincome + HEDUC, igm, yvals)
-#' xdf <- data.frame(lfincome=10, HEDUC="LessHS")
+#' xdf <- data.frame(lfincome=10, HEDUC=c("LessHS","HS"))
+#' d <- Fycondx(dres, yvals, xdf)
+#' d
 #' y0 <- yvals[50]
-#' Fycondx(y0, dres, xdf)
+#' d[[1]](y0)
 #'
 #' @export
-Fycondx <- function(y, drobj, xdf) {
+Fycondx.DR <- function(object, yvals, xdf) {
+    drobj <- object
     yvals <- drobj$yvals
     glmlist <- drobj$glmlist
-    if (! (y %in% yvals)) {
-         stop("must provide value of y in drobj$yvals")
-    }
-    x <- xdf
-    i <- which(yvals==y)[1]
-    if (length(colnames(x)) == length(names(coef(glmlist[[1]]))[-1]) ) {
-        colnames(x) <-  names(coef(glmlist[[1]]))[-1]
-    }
-    predict(glmlist[[i]], newdata=x, type="response")
+
+    predmat <- sapply(glmlist, function(g) { predict(g, newdata=xdf, type="response") } )  ## a matrix of F(y|x) for all the values in yvals and xdf
+
+    out <- lapply(1:nrow(predmat), function(i) {
+        makeDist(yvals, predmat[i,], rearrange=TRUE) } )## should get 3727 distribution functions
+    
+    ## out <- list()
+    ## for (i in 1:nrow(xdf)) {
+    ##     Fvals <- lapply(glmlist, function(g) {
+    ##         predict(g, newdata=xdf[i,], type="response")
+    ##     } )
+    ##     out[[i]] <- makeDist(yvals, Fvals)
+    ## }
+
+    out
 }
+
+
+#' @title Fycondx.rqs
+#'
+#' @description compute the conditional distribution of y conditional on x
+#'  using quantile regression
+#'
+#' @param object a quantile regression object that has been estimated in a
+#'  first step
+#' @inheritParams Fycondx.DR
+#'
+#' @return a list of conditional distributions
+#' @export
+Fycondx.rqs <- function(object, yvals, xdf) {
+    qrobj <- object
+    Fycondx <- predict(qrobj, newdata=xdf, type="Fhat", stepfun=TRUE)
+    Fycondx <- lapply(Fycondx, function(x) { makeDist(yvals, x(yvals), rearrange=TRUE) })  
+    Fycondx
+    ##lapply(Fycondx, function(x) { x(yvals) })
+}
+
+#' @title Fycondx
+#'
+#' @description a generic method for computing conditional distributions
+#'
+#' @param object either a distribution regression or quantile regression object
+#' @inheritParams Fycondx.DR
+#'
+#' @return a list of conditional distributions
+#'
+#' @export
+Fycondx <- function(object, yvals, xdf) {
+    UseMethod("Fycondx", object)
+}
+
+## predict.DR <- function(y, drobj, xdf) {
+##     yvals <- drobj$yvals
+##     glmlist <- drobj$glmlist
+##     if (! (y %in% yvals)) {
+##          stop("must provide value of y in drobj$yvals")
+##     }
+##     x <- xdf
+##     colnames(x) <-  names(coef(glmlist[[1]]))[-1]
+##     i <- which(yvals==y)[1]
+##     predict(glmlist[[i]], newdata=x, type="response")
+## }

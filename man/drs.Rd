@@ -4,12 +4,15 @@
 \alias{drs}
 \title{drs}
 \usage{
-drs(yvals, data, yname, xnames)
+drs(yvals, data, yname, xnames, link = "logit")
 }
 \arguments{
 \item{yvals}{all the values of y to compute F(y|x)}
 
 \item{data}{the dataset}
+
+\item{link}{which link function to use, it can be anything accepted
+by glm (for example, logit, probit, or cloglog), the default is "logit"}
 }
 \value{
 list of glm objects for each value of y

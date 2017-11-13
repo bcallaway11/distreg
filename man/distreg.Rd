@@ -4,7 +4,7 @@
 \alias{distreg}
 \title{distreg}
 \usage{
-distreg(formla, data, yvals)
+distreg(formla, data, yvals, link = "logit")
 }
 \arguments{
 \item{formla}{y ~ x}
@@ -12,6 +12,9 @@ distreg(formla, data, yvals)
 \item{data}{the dataset}
 
 \item{yvals}{all the values of y to compute F(y|x)}
+
+\item{link}{which link function to use, it can be anything accepted
+by glm (for example, logit, probit, or cloglog), the default is "logit"}
 }
 \value{
 DR object

@@ -8,4 +8,5 @@ Depends: R (>= 2.1.0)
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
+Imports: stats, utils, BMisc
 RoxygenNote: 6.0.1
