@@ -59,7 +59,7 @@ dres <- distreg(lcfincome ~ lfincome + HEDUC, igm, yvals)
 xdf <- data.frame(lfincome=10, HEDUC="LessHS")
 y0 <- yvals[50]
 ecdf(igm$lcfincome)(y0)
-Fycondx(y0, dres, xdf)
+Fycondx(dres, y0, xdf)
 ```
 This example says that: (1) the fraction of "children" in the dataset with income below `r format(exp(y0),digits=4)` is `r round(ecdf(igm$lcfincome)(y0),2)`, but (2) we estimate that the fraction of children whose parent's income is `r format(exp(10),digits=4)` and have parent's with less than a HS education with income below `r format(exp(y0),digits=4)` is `r round(Fycondx(y0,dres,xdf),2)`.
 

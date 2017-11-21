@@ -142,35 +142,69 @@ wgr <- function(bet,y,xmain,xother=NULL,thisx,h) {
 #' F.Y1(ytmin1, y.seq, Y1t, Y0tmin1)
 #' 
 #' @export
-ll.Fycondx <- function(xmain, y.seq, Y, XMain, xother=NULL, XOther=NULL, h=NULL, method="level") {
+ll.Fycondx.inner <- function(xmain, y, Y, XMain, XOther=NULL, h=NULL, method="level") {
     n <- length(Y)
-    ## if (method=="rank") {
-    ##     XMain <- order(XMain)/n 
-    ## }
-    ##X <- cbind(1, XMain - xmain)
-    x <- as.matrix(c(1,xmain,xother))
+    XOther <- as.matrix(XOther)
+    X <- cbind(1,XMain,XOther)
+    ##x <- as.matrix(c(1,xmain,xother))
     if (is.null(h)) {
         h <- 1.06*sd(XMain)*n^(-1/4) ## check that this is right
     }
-    ##h <- h/5
-    ##K <- diag(k(XMain - xmain,h), n, n)
-
-    Fycondx.vals <- vapply(y.seq, FUN=function(y) {
-            IY <- 1*(Y <= y)
-            ## (solve(t(X)%*%K%*%X) %*% t(X)%*%K%*%IY)[1] ##local linear
-            ##predict(glm(IY ~ Y0tmin1, family=binomial(link=logit),
-            ##            weights=k(Y0tmin1-ytmin1,2)),
-            ##        newdata=data.frame(Y0tmin1=ytmin1),
-            ##        type="response") ## local logit, I think weights are treated the wrong way here
-            o <- optim(rep(0,nrow(x)), wll, gr=wgr, y=IY, xmain=XMain, xother=XOther, thisx=xmain, h=h,##Y0tmin1, thisx=ytmin1, h=h,##thisx=ytmin1, h=h,
-                       control=list(maxit=1000, reltol=1e-2),
-                       method="BFGS")
-            thet <- as.matrix(o$par)
-            G(t(x)%*%thet)
-    } , 1.0)
-
-    ## rearrangement step
-    Fycondx.vals <- Fycondx.vals[order(Fycondx.vals)]
     
-    BMisc::makeDist(y.seq, Fycondx.vals, TRUE)
+    IY <- 1*(Y <= y)
+    o <- optim(rep(0,ncol(X)), wll, gr=wgr, y=IY, xmain=XMain, xother=XOther, thisx=xmain, h=h,##Y0tmin1, thisx=ytmin1, h=h,##thisx=ytmin1, h=h,
+               control=list(maxit=1000, reltol=1e-2),
+               method="BFGS")
+    thet <- as.matrix(o$par)
+    llDR(y,xmain,thet)
 }
+
+ll.Fycondx.xvals <- function(xmain.seq, y, Y, XMain, XOther=NULL, h=NULL, method="level") {
+    lapply(xmain.seq, ll.Fycondx.inner, y=y, Y=Y, XMain=XMain,
+           XOther=XOther, h=h, method=method)
+}
+
+ll.Fycondx.y <- function(y, xmain.seq, Y, XMain, XOther=NULL, h=NULL, method="level") {
+    ll.Fycondx.xvals(xmain.seq, y, Y, XMain, XOther, h, method)
+}
+
+ll.Fycondx <- function(y.seq, xmain.seq, Y, Xmain, XOther=NULL, h=NULL, method="level") {
+    lapply(y.seq, ll.Fycondx.y, xmain.seq=xmain.seq, Y=Y, XMain=Xmain,
+           XOther=XOther, h=h, method=method)
+}
+
+  
+
+
+## ll.Fycondx <- function(xmain, y.seq, Y, XMain, xother=NULL, XOther=NULL, h=NULL, method="level") {
+##     n <- length(Y)
+##     ## if (method=="rank") {
+##     ##     XMain <- order(XMain)/n 
+##     ## }
+##     ##X <- cbind(1, XMain - xmain)
+##     x <- as.matrix(c(1,xmain,xother))
+##     if (is.null(h)) {
+##         h <- 1.06*sd(XMain)*n^(-1/4) ## check that this is right
+##     }
+##     ##h <- h/5
+##     ##K <- diag(k(XMain - xmain,h), n, n)
+
+##     Fycondx.vals <- vapply(y.seq, FUN=function(y) {
+##             IY <- 1*(Y <= y)
+##             ## (solve(t(X)%*%K%*%X) %*% t(X)%*%K%*%IY)[1] ##local linear
+##             ##predict(glm(IY ~ Y0tmin1, family=binomial(link=logit),
+##             ##            weights=k(Y0tmin1-ytmin1,2)),
+##             ##        newdata=data.frame(Y0tmin1=ytmin1),
+##             ##        type="response") ## local logit, I think weights are treated the wrong way here
+##             o <- optim(rep(0,nrow(x)), wll, gr=wgr, y=IY, xmain=XMain, xother=XOther, thisx=xmain, h=h,##Y0tmin1, thisx=ytmin1, h=h,##thisx=ytmin1, h=h,
+##                        control=list(maxit=1000, reltol=1e-2),
+##                        method="BFGS")
+##             thet <- as.matrix(o$par)
+##             G(t(x)%*%thet)
+##     } , 1.0)
+
+##     ## rearrangement step
+##     Fycondx.vals <- Fycondx.vals[order(Fycondx.vals)]
+    
+##     BMisc::makeDist(y.seq, Fycondx.vals, TRUE)
+## }

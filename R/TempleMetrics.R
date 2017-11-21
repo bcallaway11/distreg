@@ -105,16 +105,39 @@ Fycondx.DR <- function(object, yvals, xdf) {
 
     predmat <- sapply(glmlist, function(g) { predict(g, newdata=xdf, type="response") } )  ## a matrix of F(y|x) for all the values in yvals and xdf
 
+    if (class(predmat)=="numeric") {
+        predmat <- t(predmat)
+    }
+
     out <- lapply(1:nrow(predmat), function(i) {
         makeDist(yvals, predmat[i,], rearrange=TRUE) } )## should get 3727 distribution functions
-    
-    ## out <- list()
-    ## for (i in 1:nrow(xdf)) {
-    ##     Fvals <- lapply(glmlist, function(g) {
-    ##         predict(g, newdata=xdf[i,], type="response")
-    ##     } )
-    ##     out[[i]] <- makeDist(yvals, Fvals)
-    ## }
+
+    out
+}
+
+## here object will look like a matrix
+Fycondx.llDRlist <- function(object, yvals, xdf) {
+
+    drlist <- object
+
+    ##mapply(drmat, 1, function(llDRobj) {
+
+    t <- unique(xdf[,2])
+
+    whichl <- sapply(drlist, function(d) {d$t==t} )
+
+    thisdr <- drlist[whichl]
+
+    X <- as.matrix(xdf)
+    predmat <- sapply(thisdr, function(d) { G(X%*%d$thet) })
+        
+
+    if (class(predmat)=="numeric") {
+        predmat <- t(predmat)
+    }
+
+    out <- lapply(1:nrow(predmat), function(i) {
+        makeDist(yvals, predmat[i,], rearrange=TRUE) } )## should get 3727 distribution functions
 
     out
 }
@@ -164,3 +187,113 @@ Fycondx <- function(object, yvals, xdf) {
 ##     i <- which(yvals==y)[1]
 ##     predict(glmlist[[i]], newdata=x, type="response")
 ## }
+
+#' @title lldrs
+#'
+#' @description run multiple "local" distribution regressions
+#'
+#' @inheritParams distreg
+#'
+#' @return ******
+#' @keywords internal
+#' @export
+lldrs <- function(yvals, data, yname, xnames, link="logit") {
+    lapply(yvals, lldrs.inner, data=data, yname=yname, xnames=xnames, link=link)
+}
+
+#' @title lldrs.inner
+#'
+#' @description internal function that does the heavy lifting
+#'  on estimating "local" distribution regressions
+#'
+#' @inheritParams distreg
+#' @inheritParams drs
+#' @inheritParams dr
+#'
+#' @return ***
+#' @keywords internal
+#' @export
+lldrs.inner <- function(y, data, yname, xnames, link="logit") {
+    IY <- 1*(data[,yname] <= y)
+    X <- data[,xnames]
+    dta <- cbind.data.frame(IY, X)
+    colnames(dta) <- c("IY", xnames)
+    formla <- as.formula(paste0("IY ~", paste(xnames, collapse="+")))
+    lgit <- glm(formla, data=dta, family=binomial(link=link))
+    lgit
+}
+
+
+#' @title lldistreg
+#'
+#' @description the main function for running "local" distribution regressions
+#'
+#' @param formla y ~ x
+#' @param data the dataset
+#' @param yvals all the values of y to compute F(y|x)
+#' @param link which link function to use, it can be anything accepted
+#'  by glm (for example, logit, probit, or cloglog), the default is "logit"
+#'
+#' @examples
+#' data(igm)
+#' y0 <- median(igm$lcfincome)
+#' lldistreg(lcfincome ~ lfincome + HEDUC, igm, y0)
+#'
+#' @return DR object
+#' @export
+lldistreg <- function(formla, xformla=NULL, data, yvals, tvals, link="logit",
+                      cl=1) {
+    formla <- as.formula(formla)
+    dta <- model.frame(terms(formla,data=data),data=data) #or model.matrix
+    yname <- colnames(dta)[1]
+    tname <- colnames(dta)[2]
+    xnames <- NULL
+    ##set up the x variables
+    if (!(is.null(xformla))) {
+        xformla <- as.formula(xformla)
+        xdta <- model.matrix(xformla, data=data)
+        xdta <- xdta[,-1]
+        xnames <- colnames(xdta)[-1]
+    }
+
+    out <- pbapply::pblapply(yvals, ll.Fycondx.y, xmain.seq=tvals,
+                             Y=dta[,yname],XMain=dta[,tname],
+                             XOther=xdta, cl=cl)
+    out <- unlist(out, recursive=FALSE)
+    class(out) <- "llDRlist"
+    out
+}
+
+## llDR class
+#'@title llDR
+#'
+#' @description llDR (local linear distribution regression) object.
+#'  It contains a value for y, a value for t, and a value for the parameters
+#'
+#' @param y
+#' @param t
+#' @param thet
+#'
+#' @export
+llDR<- function(y, t, thet) {
+    out <- list(y=y, t=t, thet=thet)
+    class(out) <- "llDR"
+    out
+}
+
+
+    
+## DR class
+#'@title DR
+#'
+#' @description DR (distribution regression) objects
+#'
+#' @param yvals the values of the y of F(y|x)
+#' @param glmlist an estimated model for each y value for F(y|x)
+#'
+#' @export
+DR<- function(yvals, glmlist) {
+    out <- list(yvals=yvals, glmlist=glmlist)
+    class(out) <- "DR"
+    out
+}
