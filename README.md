@@ -17,7 +17,7 @@ You can install TempleMetrics from github with:
 ``` r
 # install.packages("devtools")
 devtools::install_github("bcallaway11/TempleMetrics")
-#> Skipping install of 'TempleMetrics' from a github remote, the SHA1 (4c036ce4) has not changed since last install.
+#> Skipping install of 'TempleMetrics' from a github remote, the SHA1 (2229b379) has not changed since last install.
 #>   Use `force = TRUE` to force installation
 ```
 
