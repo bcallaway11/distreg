@@ -4,4 +4,5 @@
 #' @name TempleMetrics
 #' @import graphics
 #' @import stats
+#' @import pbapply
 NULL

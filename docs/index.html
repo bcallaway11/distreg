@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>R functions created by the Temple Econometrics Reading Group • TempleMetrics</title>
+<title>Estimating Conditional Distributions • TempleMetrics</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/sandstone/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
@@ -72,7 +72,7 @@ The TempleMetrics package is a collection of functions implemented by members of
 <p>You can install TempleMetrics from github with:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages("devtools")</span>
 devtools::<span class="kw">install_github</span>(<span class="st">"bcallaway11/TempleMetrics"</span>)
-<span class="co">#&gt; Skipping install of 'TempleMetrics' from a github remote, the SHA1 (73bae633) has not changed since last install.</span>
+<span class="co">#&gt; Skipping install of 'TempleMetrics' from a github remote, the SHA1 (4c036ce4) has not changed since last install.</span>
 <span class="co">#&gt;   Use `force = TRUE` to force installation</span></code></pre></div>
 <p>or from CRAN using</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"TempleMetrics"</span>)</code></pre></div>
@@ -100,7 +100,7 @@ dreg
 <span class="co">#&gt; $glmlist</span>
 <span class="co">#&gt; $glmlist[[1]]</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Call:  glm(formula = formla, family = binomial(link = logit), data = dta)</span>
+<span class="co">#&gt; Call:  glm(formula = formla, family = binomial(link = link), data = dta)</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Coefficients:</span>
 <span class="co">#&gt; (Intercept)     lfincome      HEDUCHS  HEDUCLessHS  </span>
@@ -125,9 +125,11 @@ xdf &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class
 y0 &lt;-<span class="st"> </span>yvals[<span class="dv">50</span>]
 <span class="kw">ecdf</span>(igm$lcfincome)(y0)
 <span class="co">#&gt; [1] 0.328</span>
-<span class="kw"><a href="reference/Fycondx.html">Fycondx</a></span>(y0, dres, xdf)
-<span class="co">#&gt;         1 </span>
-<span class="co">#&gt; 0.7267977</span></code></pre></div>
+<span class="kw"><a href="reference/Fycondx.html">Fycondx</a></span>(dres, y0, xdf)
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; Empirical CDF </span>
+<span class="co">#&gt; Call: NULL</span>
+<span class="co">#&gt;  x[1:100] = 9.6856, 9.7073, 9.7291,  ..., 11.814, 11.836</span></code></pre></div>
 <p>This example says that: (1) the fraction of “children” in the dataset with income below 46628 is 0.33, but (2) we estimate that the fraction of children whose parent’s income is 22026 and have parent’s with less than a HS education with income below 46628 is 0.73.</p>
 </div>
 </div>
@@ -136,7 +138,12 @@ y0 &lt;-<span class="st"> </span>yvals[<span class="dv">50</span>]
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2 class="hasAnchor">
-<a href="#sidebar" class="anchor"></a>License</h2>
+<a href="#sidebar" class="anchor"></a>Links</h2>
+<ul class="list-unstyled">
+<li>Download from CRAN at <br><a href="https://cran.r-project.org/package=TempleMetrics">https://​cran.r-project.org/​package=TempleMetrics</a>
+</li>
+</ul>
+<h2>License</h2>
 <p><a href="https://www.r-project.org/Licenses/GPL-2">GPL-2</a></p>
 <h2>Developers</h2>
 <ul class="list-unstyled">

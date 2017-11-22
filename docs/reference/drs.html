@@ -85,7 +85,7 @@
     <p>run multiple distribution regressions</p>
     
 
-    <pre class="usage"><span class='fu'>drs</span>(<span class='no'>yvals</span>, <span class='no'>data</span>, <span class='no'>yname</span>, <span class='no'>xnames</span>)</pre>
+    <pre class="usage"><span class='fu'>drs</span>(<span class='no'>yvals</span>, <span class='no'>data</span>, <span class='no'>yname</span>, <span class='no'>xnames</span>, <span class='kw'>link</span> <span class='kw'>=</span> <span class='st'>"logit"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -97,6 +97,11 @@
     <tr>
       <th>data</th>
       <td><p>the dataset</p></td>
+    </tr>
+    <tr>
+      <th>link</th>
+      <td><p>which link function to use, it can be anything accepted
+by glm (for example, logit, probit, or cloglog), the default is "logit"</p></td>
     </tr>
     </table>
     

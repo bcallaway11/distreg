@@ -188,58 +188,65 @@ Fycondx <- function(object, yvals, xdf) {
 ##     predict(glmlist[[i]], newdata=x, type="response")
 ## }
 
-#' @title lldrs
-#'
-#' @description run multiple "local" distribution regressions
-#'
-#' @inheritParams distreg
-#'
-#' @return ******
-#' @keywords internal
-#' @export
-lldrs <- function(yvals, data, yname, xnames, link="logit") {
-    lapply(yvals, lldrs.inner, data=data, yname=yname, xnames=xnames, link=link)
-}
+## #' @title lldrs
+## #'
+## #' @description run multiple "local" distribution regressions
+## #'
+## #' @inheritParams distreg
+## #'
+## #' @return ******
+## #' @keywords internal
+## #' @export
+## lldrs <- function(yvals, data, yname, xnames, link="logit") {
+##     lapply(yvals, lldrs.inner, data=data, yname=yname, xnames=xnames, link=link)
+## }
 
-#' @title lldrs.inner
-#'
-#' @description internal function that does the heavy lifting
-#'  on estimating "local" distribution regressions
-#'
-#' @inheritParams distreg
-#' @inheritParams drs
-#' @inheritParams dr
-#'
-#' @return ***
-#' @keywords internal
-#' @export
-lldrs.inner <- function(y, data, yname, xnames, link="logit") {
-    IY <- 1*(data[,yname] <= y)
-    X <- data[,xnames]
-    dta <- cbind.data.frame(IY, X)
-    colnames(dta) <- c("IY", xnames)
-    formla <- as.formula(paste0("IY ~", paste(xnames, collapse="+")))
-    lgit <- glm(formla, data=dta, family=binomial(link=link))
-    lgit
-}
+## #' @title lldrs.inner
+## #'
+## #' @description internal function that does the heavy lifting
+## #'  on estimating "local" distribution regressions
+## #'
+## #' @inheritParams distreg
+## #' @inheritParams drs
+## #' @inheritParams dr
+## #'
+## #' @return ***
+## #' @keywords internal
+## #' @export
+## lldrs.inner <- function(y, data, yname, xnames, link="logit") {
+##     IY <- 1*(data[,yname] <= y)
+##     X <- data[,xnames]
+##     dta <- cbind.data.frame(IY, X)
+##     colnames(dta) <- c("IY", xnames)
+##     formla <- as.formula(paste0("IY ~", paste(xnames, collapse="+")))
+##     lgit <- glm(formla, data=dta, family=binomial(link=link))
+##     lgit
+## }
 
 
 #' @title lldistreg
 #'
-#' @description the main function for running "local" distribution regressions
+#' @description the main function for running "local" distribution regressions.
+#'  This function runs a local regression that is local for a single
+#'  (scalar) continuous treatment variable.  It also allows for other variables
+#'  but it does not smooth over these variables.
 #'
-#' @param formla y ~ x
+#' @param formla y ~ t , t must be a single continuous variable
+#' @param xformla ~x, x are other (non-smoothed) variables
+#'  included in the model
 #' @param data the dataset
-#' @param yvals all the values of y to compute F(y|x)
+#' @param yvals all the values of y to compute F(y|t,x)
+#' @param tvals the values of the continuous treatment to comput F(y|t,x)
 #' @param link which link function to use, it can be anything accepted
 #'  by glm (for example, logit, probit, or cloglog), the default is "logit"
-#'
+#' @param cl the number of clusters to use, default is 1
+#' 
 #' @examples
 #' data(igm)
-#' y0 <- median(igm$lcfincome)
-#' lldistreg(lcfincome ~ lfincome + HEDUC, igm, y0)
+#' lldistreg(lcfincome ~ lfincome, ~HEDUC, igm, 10, 10)
 #'
-#' @return DR object
+#' @return a list of llDR objects that are indexed by the values in yvals
+#'  and tvals
 #' @export
 lldistreg <- function(formla, xformla=NULL, data, yvals, tvals, link="logit",
                       cl=1) {
@@ -256,11 +263,10 @@ lldistreg <- function(formla, xformla=NULL, data, yvals, tvals, link="logit",
         xnames <- colnames(xdta)[-1]
     }
 
-    out <- pbapply::pblapply(yvals, ll.Fycondx.y, xmain.seq=tvals,
-                             Y=dta[,yname],XMain=dta[,tname],
-                             XOther=xdta, cl=cl)
-    out <- unlist(out, recursive=FALSE)
-    class(out) <- "llDRlist"
+
+    out <-  lldrs.inner(yvals, xmain.seq=tvals, Y=dta[,yname],XMain=dta[,tname],
+                        XOther=xdta, cl=cl)
+
     out
 }
 
@@ -270,9 +276,10 @@ lldistreg <- function(formla, xformla=NULL, data, yvals, tvals, link="logit",
 #' @description llDR (local linear distribution regression) object.
 #'  It contains a value for y, a value for t, and a value for the parameters
 #'
-#' @param y
-#' @param t
-#' @param thet
+#' @param y the value of y for which F(y|t,x) was computed
+#' @param t the value of t for which F(y|t,x) was computed
+#' @param thet the local parameters from the local linear distribution
+#'  regression
 #'
 #' @export
 llDR<- function(y, t, thet) {
@@ -283,17 +290,3 @@ llDR<- function(y, t, thet) {
 
 
     
-## DR class
-#'@title DR
-#'
-#' @description DR (distribution regression) objects
-#'
-#' @param yvals the values of the y of F(y|x)
-#' @param glmlist an estimated model for each y value for F(y|x)
-#'
-#' @export
-DR<- function(yvals, glmlist) {
-    out <- list(yvals=yvals, glmlist=glmlist)
-    class(out) <- "DR"
-    out
-}

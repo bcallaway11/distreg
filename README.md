@@ -17,15 +17,8 @@ You can install TempleMetrics from github with:
 ``` r
 # install.packages("devtools")
 devtools::install_github("bcallaway11/TempleMetrics")
-#> Downloading GitHub repo bcallaway11/TempleMetrics@master
-#> from URL https://api.github.com/repos/bcallaway11/TempleMetrics/zipball/master
-#> Installing TempleMetrics
-#> '/usr/lib/R/bin/R' --no-site-file --no-environ --no-save --no-restore  \
-#>   --quiet CMD INSTALL  \
-#>   '/tmp/Rtmpqr7FBK/devtools10a12afabfbe/bcallaway11-TempleMetrics-73bae63'  \
-#>   --library='/home/tug82594/R/x86_64-pc-linux-gnu-library/3.4'  \
-#>   --install-tests
-#> 
+#> Skipping install of 'TempleMetrics' from a github remote, the SHA1 (4c036ce4) has not changed since last install.
+#>   Use `force = TRUE` to force installation
 ```
 
 or from CRAN using
@@ -62,7 +55,7 @@ dreg
 #> $glmlist
 #> $glmlist[[1]]
 #> 
-#> Call:  glm(formula = formla, family = binomial(link = logit), data = dta)
+#> Call:  glm(formula = formla, family = binomial(link = link), data = dta)
 #> 
 #> Coefficients:
 #> (Intercept)     lfincome      HEDUCHS  HEDUCLessHS  
@@ -90,9 +83,11 @@ xdf <- data.frame(lfincome=10, HEDUC="LessHS")
 y0 <- yvals[50]
 ecdf(igm$lcfincome)(y0)
 #> [1] 0.328
-Fycondx(y0, dres, xdf)
-#>         1 
-#> 0.7267977
+Fycondx(dres, y0, xdf)
+#> [[1]]
+#> Empirical CDF 
+#> Call: NULL
+#>  x[1:100] = 9.6856, 9.7073, 9.7291,  ..., 11.814, 11.836
 ```
 
 This example says that: (1) the fraction of "children" in the dataset with income below 46628 is 0.33, but (2) we estimate that the fraction of children whose parent's income is 22026 and have parent's with less than a HS education with income below 46628 is 0.73.

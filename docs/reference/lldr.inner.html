@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>distreg — distreg • TempleMetrics</title>
+<title>lldr.inner — lldr.inner • TempleMetrics</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -78,64 +78,77 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>distreg</h1>
+    <h1>lldr.inner</h1>
     </div>
 
     
-    <p>the main function for running distribution regressions</p>
+    <p>This calculates a single distribution regression for one value
+ of y and one value of xmain</p>
     
 
-    <pre class="usage"><span class='fu'>distreg</span>(<span class='no'>formla</span>, <span class='no'>data</span>, <span class='no'>yvals</span>, <span class='kw'>link</span> <span class='kw'>=</span> <span class='st'>"logit"</span>)</pre>
+    <pre class="usage"><span class='fu'>lldr.inner</span>(<span class='no'>xmain</span>, <span class='no'>y</span>, <span class='no'>Y</span>, <span class='no'>XMain</span>, <span class='kw'>XOther</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>h</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"level"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>formla</th>
-      <td><p>y ~ x</p></td>
+      <th>xmain</th>
+      <td><p>a particular value for the "main" continuous x variable</p></td>
     </tr>
     <tr>
-      <th>data</th>
-      <td><p>the dataset</p></td>
+      <th>y</th>
+      <td><p>a particular value of y to compute local linear distribution
+regression for</p></td>
     </tr>
     <tr>
-      <th>yvals</th>
-      <td><p>all the values of y to compute F(y|x)</p></td>
+      <th>Y</th>
+      <td><p>a vector containing the data for the outcome</p></td>
     </tr>
     <tr>
-      <th>link</th>
-      <td><p>which link function to use, it can be anything accepted
-by glm (for example, logit, probit, or cloglog), the default is "logit"</p></td>
+      <th>XMain</th>
+      <td><p>a vector containing the data for the "main" x variable</p></td>
+    </tr>
+    <tr>
+      <th>XOther</th>
+      <td><p>a matrix or data.frame containing the data for the "other"
+x variables</p></td>
+    </tr>
+    <tr>
+      <th>h</th>
+      <td><p>optional bandwidth</p></td>
+    </tr>
+    <tr>
+      <th>method</th>
+      <td><p>"level" or "rank" determining whether method should
+be used conditional on ytmin1 or the rank of ytmin1</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>DR object</p>
+    <p>an llDR object</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>data</span>(<span class='no'>igm</span>)
-<span class='no'>y0</span> <span class='kw'>&lt;-</span> <span class='fu'>median</span>(<span class='no'>igm</span>$<span class='no'>lcfincome</span>)
-<span class='fu'>distreg</span>(<span class='no'>lcfincome</span> ~ <span class='no'>lfincome</span> + <span class='no'>HEDUC</span>, <span class='no'>igm</span>, <span class='no'>y0</span>)</div><div class='output co'>#&gt; $yvals
-#&gt; [1] 11.04563
+<span class='no'>lcinc</span> <span class='kw'>&lt;-</span> <span class='fl'>10</span>
+<span class='no'>Y</span> <span class='kw'>&lt;-</span> <span class='no'>igm</span>$<span class='no'>lcfincome</span>
+<span class='no'>XMain</span> <span class='kw'>&lt;-</span> <span class='no'>igm</span>$<span class='no'>lfincome</span>
+<span class='no'>XOther</span> <span class='kw'>&lt;-</span> <span class='fu'>data.frame</span>(<span class='kw'>COL</span><span class='kw'>=</span><span class='fl'>1</span>*(<span class='no'>igm</span>$<span class='no'>HEDUC</span><span class='kw'>==</span><span class='st'>"COL"</span>))
+<span class='fu'>lldr.inner</span>(<span class='no'>lcinc</span>, <span class='fl'>10</span>, <span class='no'>Y</span>, <span class='no'>XMain</span>, <span class='no'>XOther</span>)</div><div class='output co'>#&gt; $y
+#&gt; [1] 10
 #&gt; 
-#&gt; $glmlist
-#&gt; $glmlist[[1]]
+#&gt; $t
+#&gt; [1] 10
 #&gt; 
-#&gt; Call:  glm(formula = formla, family = binomial(link = link), data = dta)
-#&gt; 
-#&gt; Coefficients:
-#&gt; (Intercept)     lfincome      HEDUCHS  HEDUCLessHS  
-#&gt;     15.3320      -1.3976       0.1629       0.2256  
-#&gt; 
-#&gt; Degrees of Freedom: 499 Total (i.e. Null);  496 Residual
-#&gt; Null Deviance:	    693.1 
-#&gt; Residual Deviance: 640.9 	AIC: 648.9
-#&gt; 
+#&gt; $thet
+#&gt;            [,1]
+#&gt; [1,] 0.01586159
+#&gt; [2,] 0.06243970
+#&gt; [3,] 0.00000000
 #&gt; 
 #&gt; attr(,"class")
-#&gt; [1] "DR"</div><div class='input'>
+#&gt; [1] "llDR"</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

@@ -116,33 +116,34 @@ wgr <- function(bet,y,xmain,xother=NULL,thisx,h) {
 
 
 
-#' @title F.Y1
+#' @title lldr.inner
 #'
-#' @description calculate F(y|ytmin1), the conditional distribution
-#'  of treated potential outcomes conditional on ytmin1;
-#'  The order of the variables is due to the way that the function
-#'  is called later on
+#' @description This calculates a single distribution regression for one value
+#'  of y and one value of xmain
 #'
-#' @param y.seq possible values for y to take
-#' @param ytmin1 the value of ytmin1 to condition on
-#' @param Y1t vector of outcomes for the treated group in period t
-#' @param Y0tmin1 vector of outcomes for the treated group in period t-1
+#' @param xmain a particular value for the "main" continuous x variable
+#' @param y a particular value of y to compute local linear distribution
+#'  regression for
+#' @param Y a vector containing the data for the outcome
+#' @param XMain a vector containing the data for the "main" x variable
+#' @param XOther a matrix or data.frame containing the data for the "other"
+#'  x variables
 #' @param h optional bandwidth
 #' @param method "level" or "rank" determining whether method should
 #'  be used conditional on ytmin1 or the rank of ytmin1
 #'
-#' @return distribution F(y|ytmin1)
+#' @return an llDR object
 #'
 #' @examples
-#' data(displacements)
-#' ytmin1 <- 10
-#' Y1t <- subset(displacements, year==2011 & treat==1)$learn
-#' Y0tmin1 <- subset(displacements, year==2007 & treat==1)$learn
-#' y.seq <- seq(min(c(Y0tmin1,Y1t)), max(c(Y0tmin1,Y1t)), length.out=100)
-#' F.Y1(ytmin1, y.seq, Y1t, Y0tmin1)
+#' data(igm)
+#' lcinc <- 10
+#' Y <- igm$lcfincome
+#' XMain <- igm$lfincome
+#' XOther <- data.frame(COL=1*(igm$HEDUC=="COL"))
+#' lldr.inner(lcinc, 10, Y, XMain, XOther)
 #' 
 #' @export
-ll.Fycondx.inner <- function(xmain, y, Y, XMain, XOther=NULL, h=NULL, method="level") {
+lldr.inner <- function(xmain, y, Y, XMain, XOther=NULL, h=NULL, method="level") {
     n <- length(Y)
     XOther <- as.matrix(XOther)
     X <- cbind(1,XMain,XOther)
@@ -159,52 +160,60 @@ ll.Fycondx.inner <- function(xmain, y, Y, XMain, XOther=NULL, h=NULL, method="le
     llDR(y,xmain,thet)
 }
 
-ll.Fycondx.xvals <- function(xmain.seq, y, Y, XMain, XOther=NULL, h=NULL, method="level") {
-    lapply(xmain.seq, ll.Fycondx.inner, y=y, Y=Y, XMain=XMain,
+#' @title lldr.inner.xvals
+#'
+#' @description calls lldr.inner for a vector of x values
+#'
+#' @inheritParams lldr.inner
+#' @param xmain.seq a vector of x values to compute F(y|x) using local
+#'  linear distribution regression
+#'
+#' @return a list of llDR objects
+#'
+#' @keywords internal
+#' @export
+lldr.inner.xvals <- function(xmain.seq, y, Y, XMain, XOther=NULL, h=NULL, method="level") {
+    lapply(xmain.seq, lldr.inner, y=y, Y=Y, XMain=XMain,
            XOther=XOther, h=h, method=method)
 }
 
-ll.Fycondx.y <- function(y, xmain.seq, Y, XMain, XOther=NULL, h=NULL, method="level") {
-    ll.Fycondx.xvals(xmain.seq, y, Y, XMain, XOther, h, method)
+#' @title lldr.inner.y
+#'
+#' @description calls lldr.inner.xvals for a particular value of y.  This is a
+#'  dummy function that just reverses the arguments of lldr.inner.xvals in
+#'  order to be able to call it for a vector of y values
+#'
+#' @inheritParams lldr.inner.xvals
+#'
+#' @return a list of llDR objects
+#'
+#' @keywords internal
+#' @export
+lldr.inner.y <- function(y, xmain.seq, Y, XMain, XOther=NULL, h=NULL, method="level") {
+    lldr.inner.xvals(xmain.seq, y, Y, XMain, XOther, h, method)
 }
 
-ll.Fycondx <- function(y.seq, xmain.seq, Y, Xmain, XOther=NULL, h=NULL, method="level") {
-    lapply(y.seq, ll.Fycondx.y, xmain.seq=xmain.seq, Y=Y, XMain=Xmain,
-           XOther=XOther, h=h, method=method)
+
+#' @title lldrs.inner
+#'
+#' @description internal function for running local linear distribution
+#'  regression for a vector of y and x
+#'
+#' @inheritParams lldr.inner.xvals
+#' @param y.seq a vector of y values to compute F(y|x) for using local linear
+#'  distribution regression
+#' @param cl The number of clusters to use, default is 1
+#'
+#' @return a list of llDR objects that are indexed by y and t separately
+#' 
+#' @export
+lldrs.inner <- function(y.seq, xmain.seq, Y, XMain, XOther=NULL, h=NULL, method="level", cl=1) {
+    out <- pbapply::pblapply(y.seq, lldr.inner.y, xmain.seq=xmain.seq,
+                             Y=Y, XMain=XMain,
+                             XOther=XOther, h=h, method=method, cl=cl)
+    out <- unlist(out, recursive=FALSE)
+    class(out) <- "llDRlist"
+    out
 }
 
   
-
-
-## ll.Fycondx <- function(xmain, y.seq, Y, XMain, xother=NULL, XOther=NULL, h=NULL, method="level") {
-##     n <- length(Y)
-##     ## if (method=="rank") {
-##     ##     XMain <- order(XMain)/n 
-##     ## }
-##     ##X <- cbind(1, XMain - xmain)
-##     x <- as.matrix(c(1,xmain,xother))
-##     if (is.null(h)) {
-##         h <- 1.06*sd(XMain)*n^(-1/4) ## check that this is right
-##     }
-##     ##h <- h/5
-##     ##K <- diag(k(XMain - xmain,h), n, n)
-
-##     Fycondx.vals <- vapply(y.seq, FUN=function(y) {
-##             IY <- 1*(Y <= y)
-##             ## (solve(t(X)%*%K%*%X) %*% t(X)%*%K%*%IY)[1] ##local linear
-##             ##predict(glm(IY ~ Y0tmin1, family=binomial(link=logit),
-##             ##            weights=k(Y0tmin1-ytmin1,2)),
-##             ##        newdata=data.frame(Y0tmin1=ytmin1),
-##             ##        type="response") ## local logit, I think weights are treated the wrong way here
-##             o <- optim(rep(0,nrow(x)), wll, gr=wgr, y=IY, xmain=XMain, xother=XOther, thisx=xmain, h=h,##Y0tmin1, thisx=ytmin1, h=h,##thisx=ytmin1, h=h,
-##                        control=list(maxit=1000, reltol=1e-2),
-##                        method="BFGS")
-##             thet <- as.matrix(o$par)
-##             G(t(x)%*%thet)
-##     } , 1.0)
-
-##     ## rearrangement step
-##     Fycondx.vals <- Fycondx.vals[order(Fycondx.vals)]
-    
-##     BMisc::makeDist(y.seq, Fycondx.vals, TRUE)
-## }

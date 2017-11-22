@@ -5,5 +5,3 @@
 ^README-.*\.png$
 ^_pkgdown\.yml$
 ^cran-comments\.md$
-^R/TempleMetrics2\.R$
-^R/lldr\.R$
