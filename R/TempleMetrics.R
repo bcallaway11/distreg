@@ -115,7 +115,15 @@ Fycondx.DR <- function(object, yvals, xdf) {
     out
 }
 
-## here object will look like a matrix
+#' @title Fycondx.llDRlist
+#'
+#' @description take a particular value of y and predict F(y|x)
+#'
+#' @inheritParams Fycondx
+#'
+#' @return a list of ecdfs for each row in xdf
+#'
+#' @export
 Fycondx.llDRlist <- function(object, yvals, xdf) {
 
     drlist <- object
