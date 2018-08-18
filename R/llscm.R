@@ -9,6 +9,7 @@
 #' @param h bandwidth
 #'
 #' @return Coefficients
+#'
 #' @export
 
 ## local linear smooth varying coefficient model
