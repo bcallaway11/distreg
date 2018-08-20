@@ -4,22 +4,35 @@
 \alias{llscm}
 \title{llscm}
 \usage{
-llscm(t, Y, T, Xmat, h)
+llscm(formla, xformla, data, t, h)
 }
 \arguments{
+\item{formla}{a formula y ~ treatment}
+
+\item{xformla}{one sided formula for x variables to include, e.g. ~x1 + x2}
+
+\item{data}{the data.frame where y, t, and x are}
+
 \item{t}{conditional at a value T=t}
-
-\item{Y}{outcome variable}
-
-\item{T}{treatment variable}
-
-\item{Xmat}{covariates}
 
 \item{h}{bandwidth}
 }
 \value{
-Coefficients
+a 2*k (k being the dimension of X) vector of coefficients, the first
+ k are the "levels", the second k are the derivatives with respect to each
+ element of X.
 }
 \description{
 local linear estimator of smoothing coefficient model
+}
+\examples{
+data(igm)
+igm$hs=ifelse(igm$HEDUC=="HS",1,0)
+igm$col=ifelse(igm$HEDUC=="COL",1,0)
+formla=lcfincome~lfincome
+xformla=~hs+col
+t=mean(igm$lfincome)
+h=1.2
+data=igm
+llscm(formla,xformla,data,t,h)
 }
