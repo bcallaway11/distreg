@@ -42,8 +42,9 @@ llscm.inner <- function(t, Y, T, Xmat, h) {
 #' data(igm)
 #' igm$hs=ifelse(igm$HEDUC=="HS",1,0)
 #' igm$col=ifelse(igm$HEDUC=="COL",1,0)
+#' igm$const=1
 #' formla=lcfincome~lfincome
-#' xformla=~hs+col
+#' xformla=~const+hs+col
 #' t=mean(igm$lfincome)
 #' h=1.2
 #' data=igm
