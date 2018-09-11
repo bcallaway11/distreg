@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>drs.inner — drs.inner • TempleMetrics</title>
+<title>llscm.inner — llscm.inner • TempleMetrics</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,10 +30,9 @@
 
 
 
-<meta property="og:title" content="drs.inner — drs.inner" />
+<meta property="og:title" content="llscm.inner — llscm.inner" />
 
-<meta property="og:description" content="internal function that does the heavy lifting
- on estimating distribution regressions" />
+<meta property="og:description" content="internal function that does the heavy lifting" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -96,37 +95,49 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>drs.inner</h1>
+    <h1>llscm.inner</h1>
     
-    <div class="hidden name"><code>drs.inner.Rd</code></div>
+    <div class="hidden name"><code>llscm.inner.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>internal function that does the heavy lifting
- on estimating distribution regressions</p>
+    <p>internal function that does the heavy lifting</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>drs.inner</span>(<span class='no'>y</span>, <span class='no'>data</span>, <span class='no'>yname</span>, <span class='no'>xnames</span>, <span class='kw'>link</span> <span class='kw'>=</span> <span class='st'>"logit"</span>)</pre>
+    <pre class="usage"><span class='fu'>llscm.inner</span>(<span class='no'>t</span>, <span class='no'>Y</span>, <span class='no'>T</span>, <span class='kw'>Xmat</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>h</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>data</th>
-      <td><p>the dataset</p></td>
+      <th>t</th>
+      <td><p>conditional at a value T=t</p></td>
     </tr>
     <tr>
-      <th>link</th>
-      <td><p>which link function to use, it can be anything accepted
-by glm (for example, logit, probit, or cloglog), the default is "logit"</p></td>
+      <th>Y</th>
+      <td><p>outcome variable</p></td>
+    </tr>
+    <tr>
+      <th>T</th>
+      <td><p>treatment variable</p></td>
+    </tr>
+    <tr>
+      <th>Xmat</th>
+      <td><p>covariates</p></td>
+    </tr>
+    <tr>
+      <th>h</th>
+      <td><p>bandwidth</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>glm object</p>
+    <p>a 2*k (k being the dimension of X) vector of coefficients, the first
+ k are the "levels", the second k are the derivatives with respect to each
+ element of X.</p>
     
 
   </div>

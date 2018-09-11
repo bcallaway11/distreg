@@ -4,7 +4,7 @@
 \alias{llscm}
 \title{llscm}
 \usage{
-llscm(formla, xformla, data, t, h)
+llscm(formla, xformla = NULL, data, t, h)
 }
 \arguments{
 \item{formla}{a formula y ~ treatment}
@@ -29,9 +29,8 @@ local linear estimator of smoothing coefficient model
 data(igm)
 igm$hs=ifelse(igm$HEDUC=="HS",1,0)
 igm$col=ifelse(igm$HEDUC=="COL",1,0)
-igm$const=1
 formla=lcfincome~lfincome
-xformla=~const+hs+col
+xformla=~hs+col
 t=mean(igm$lfincome)
 h=1.2
 data=igm

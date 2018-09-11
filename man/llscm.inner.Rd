@@ -4,7 +4,7 @@
 \alias{llscm.inner}
 \title{llscm.inner}
 \usage{
-llscm.inner(t, Y, T, Xmat, h)
+llscm.inner(t, Y, T, Xmat = NULL, h = NULL)
 }
 \arguments{
 \item{t}{conditional at a value T=t}
