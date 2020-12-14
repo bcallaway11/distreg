@@ -4,8 +4,7 @@
 \alias{lldistreg}
 \title{lldistreg}
 \usage{
-lldistreg(formla, xformla = NULL, data, yvals, tvals, link = "logit",
-  cl = 1)
+lldistreg(formla, xformla = ~1, data, yvals, tvals, link = "logit", cl = 1)
 }
 \arguments{
 \item{formla}{y ~ t , t must be a single continuous variable}

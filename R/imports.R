@@ -1,7 +1,7 @@
-#' TempleMetrics: Functions from the Temple Econometrics Reading Group
+#' distreg: Distribution regression
 #'
 #' @docType package
-#' @name TempleMetrics
+#' @name distreg
 #' @import graphics
 #' @import stats
 #' @import pbapply

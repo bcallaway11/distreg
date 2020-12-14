@@ -256,7 +256,7 @@ Fycondx <- function(object, yvals, xdf) {
 #' @return a list of llDR objects that are indexed by the values in yvals
 #'  and tvals
 #' @export
-lldistreg <- function(formla, xformla=NULL, data, yvals, tvals, link="logit",
+lldistreg <- function(formla, xformla=~1, data, yvals, tvals, link="logit",
                       cl=1) {
     formla <- as.formula(formla)
     dta <- model.frame(terms(formla,data=data),data=data) #or model.matrix

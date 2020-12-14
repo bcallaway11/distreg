@@ -145,7 +145,7 @@ wgr <- function(bet,y,xmain,xother=NULL,thisx,h) {
 #' @export
 lldr.inner <- function(xmain, y, Y, XMain, XOther=NULL, h=NULL, method="level") {
     n <- length(Y)
-    XOther <- as.matrix(XOther)
+    if (!is.null(XOther)) XOther <- as.matrix(XOther)
     X <- cbind(1,XMain,XOther)
     ##x <- as.matrix(c(1,xmain,xother))
     if (is.null(h)) {

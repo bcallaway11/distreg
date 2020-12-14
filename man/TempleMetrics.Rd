@@ -3,8 +3,4 @@
 \docType{package}
 \name{TempleMetrics}
 \alias{TempleMetrics}
-\alias{TempleMetrics-package}
 \title{TempleMetrics: Functions from the Temple Econometrics Reading Group}
-\description{
-TempleMetrics: Functions from the Temple Econometrics Reading Group
-}

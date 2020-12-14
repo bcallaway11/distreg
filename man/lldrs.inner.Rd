@@ -4,8 +4,16 @@
 \alias{lldrs.inner}
 \title{lldrs.inner}
 \usage{
-lldrs.inner(y.seq, xmain.seq, Y, XMain, XOther = NULL, h = NULL,
-  method = "level", cl = 1)
+lldrs.inner(
+  y.seq,
+  xmain.seq,
+  Y,
+  XMain,
+  XOther = NULL,
+  h = NULL,
+  method = "level",
+  cl = 1
+)
 }
 \arguments{
 \item{y.seq}{a vector of y values to compute F(y|x) for using local linear

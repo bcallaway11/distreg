@@ -4,8 +4,7 @@
 \alias{lldr.inner}
 \title{lldr.inner}
 \usage{
-lldr.inner(xmain, y, Y, XMain, XOther = NULL, h = NULL,
-  method = "level")
+lldr.inner(xmain, y, Y, XMain, XOther = NULL, h = NULL, method = "level")
 }
 \arguments{
 \item{xmain}{a particular value for the "main" continuous x variable}

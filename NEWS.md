@@ -1,3 +1,6 @@
+# distreg 1.3.0
+  * Port code from TempleMetrics package
+
 #TempleMetrics 1.2.0
   * New code for local linear smooth varying coefficients models
 

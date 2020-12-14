@@ -4,8 +4,15 @@
 \alias{lldr.inner.xvals}
 \title{lldr.inner.xvals}
 \usage{
-lldr.inner.xvals(xmain.seq, y, Y, XMain, XOther = NULL, h = NULL,
-  method = "level")
+lldr.inner.xvals(
+  xmain.seq,
+  y,
+  Y,
+  XMain,
+  XOther = NULL,
+  h = NULL,
+  method = "level"
+)
 }
 \arguments{
 \item{xmain.seq}{a vector of x values to compute F(y|x) using local

@@ -4,8 +4,7 @@
 \alias{lldr.inner.y}
 \title{lldr.inner.y}
 \usage{
-lldr.inner.y(y, xmain.seq, Y, XMain, XOther = NULL, h = NULL,
-  method = "level")
+lldr.inner.y(y, xmain.seq, Y, XMain, XOther = NULL, h = NULL, method = "level")
 }
 \arguments{
 \item{y}{a particular value of y to compute local linear distribution
