@@ -15,10 +15,18 @@ knitr::opts_chunk$set(
 # distreg
 
 The `distreg` package is a collection of functions built for distribution regression.  That is, one can estimate the distribution of $Y$ conditional on $X$ using a model for a binary outcome.  For example,
-\begin{align*}
+$$
   F_{Y|X}(y|x) = \Lambda(x'\beta)
-\end{align*}
+$$
 where $\Lambda$ is some known link function, such as logit.  
+
+This package was formerly called `TempleMetrics`.  For the time being, we are just hosting the package on Github, but it should work just fine for you.  The main methods are:
+
+* `distreg` -- a function to implement distribution regression as in Foresi and Peracchi (1995) <doi:10.2307/2291056> and Chernozhukov, Fernandez-Val, and Melly (2013) <doi:10.3982/ECTA10582>.
+
+* `lldistreg` -- a function to implement a local linear regression (it's local in just one particular variable -- often a ``treatment'')
+
+In either case, it is often useful to convert these estimates into estimates of conditional distributions themselves. This can be done with the function `Fycondx`.  We give some examples below.
 
 ## Installation
 

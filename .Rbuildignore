@@ -6,5 +6,4 @@
 ^_pkgdown\.yml$
 ^cran-comments\.md$
 ^revdep$
-R/rw_dr.R
-R/rw_qr.R
+^future_code$

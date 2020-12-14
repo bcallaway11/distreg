@@ -105,7 +105,7 @@ Fycondx.DR <- function(object, yvals, xdf) {
 
     predmat <- sapply(glmlist, function(g) { predict(g, newdata=xdf, type="response") } )  ## a matrix of F(y|x) for all the values in yvals and xdf
 
-    if (class(predmat)=="numeric") {
+    if (class(predmat)[1]=="numeric") {
         predmat <- t(predmat)
     }
 
@@ -140,7 +140,7 @@ Fycondx.llDRlist <- function(object, yvals, xdf) {
     predmat <- sapply(thisdr, function(d) { G(X%*%d$thet) })
         
 
-    if (class(predmat)=="numeric") {
+    if (class(predmat)[1]=="numeric") {
         predmat <- t(predmat)
     }
 
